@@ -1,7 +1,7 @@
 // The Sky page engine: sky band, orb, draw-on-the-sky egg, Himalaya footer, IST clock and theme.
 // Ported from reference/04-sky-index.html. Default sky is the vendored ascii-sky; "dots" is the LED dot sky.
 import { mountSky, type MountedSky } from './ascii-sky';
-import type { Range } from './himalaya';
+import { startFooter, type Footer } from './footer';
 
 export type Theme = 'day' | 'night' | 'monsoon';
 export type Pref = 'auto' | Theme;
@@ -240,12 +240,9 @@ export function startSky(mode: SkyMode, forced: Theme | null, assets = '/ascii-s
     octx.globalAlpha = 1;
   }
 
-  /* ---------- footer: Himalayan peaks over a deodar forest (three.js, loaded on demand) ---------- */
-  let range: Range | null = null;
+  /* ---------- footer: the Himalaya in pixels ---------- */
   const rc = $<HTMLCanvasElement>('#range');
-  if (rc) import('./himalaya')
-    .then((m) => { if (ac.signal.aborted) return; range = m.startRange(rc, reduce, requestFrame); requestFrame(); })
-    .catch(() => rc.parentElement?.classList.add('flat'));
+  const range: Footer | null = rc ? startFooter(rc, reduce, requestFrame) : null;
 
   /* live time and day in Bengaluru */
   function tickNow() { const el = $('#nowT'); if (!el) return; const d = ist(), h = d.getUTCHours(), m = String(d.getUTCMinutes()).padStart(2, '0');

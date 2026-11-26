@@ -17,7 +17,7 @@ Job search. Funded fintechs first (founder's office, growth, ops), VC second, Be
 ## Current direction (26 Nov 2026): reference/04-sky-index.html + reference/05-city.html
 - `/`: the Sky page. 672px single column under a dot-sky band (clouds by day, stars at night, rain in monsoon), orb + name, Notes / Projects / Experience rows with LED leader dots, hash pages for Work, Books, Thoughts, Music, draw-on-the-sky egg (dot sky only), auto/day/night/monsoon toggle.
 - Sky band: unvalley's ascii-sky (chosen 26 Nov). `?sky=dots` keeps the LED dot sky for comparison.
-- Footer: a Himalayan meadow in three.js, trees first. Deodars, blue pines and red-flowering rhododendrons, toon-shaded, on a flowered meadow under snow peaks. Trees sway in gusting wind, lean away from the cursor, boing when clicked or tapped; tapping grass sends a gust. Light follows day/night/monsoon.
+- Footer: the Himalaya in pixel art. Snow peaks with lit and shadowed faces and couloirs, a hazy foothill ridge, and the pixel forest in front (deodars, pines, red-flowering rhododendrons). Drifting clouds, a snow plume off the highest summit, birds by day, stars and moonlit snow at night, rain in monsoon. Tried and rejected on 26 Nov: realistic 3D (trees too small), toon 3D meadow (childish).
 - `/city`: the live Bengaluru banner on its own.
 
 ## Previous direction (22 Nov 2026): reference/01-dot-screen-variants.html

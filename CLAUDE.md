@@ -6,7 +6,7 @@ Read BRIEF.md and CONTENT.md before any change. reference/04-sky-index.html (the
 - Next.js 15 (App Router), React 19, TypeScript, deployed on Vercel
 - Plain CSS: tokens as custom properties in `app/globals.css`, CSS modules per component. No Tailwind, no CSS-in-JS, no UI kits
 - Sky page (`lib/sky.ts`): ascii-sky in the top band (MIT, vendored in `lib/ascii-sky`, assets in `public/ascii-sky`); `?sky=dots` swaps in the LED dot-sky shader. 2D canvas for the orb
-- Footer (`lib/himalaya.ts`): `three` pinned to an exact version (no ^), `WebGLRenderer`, loaded with a dynamic import so it stays out of first load. Driven by the sky engine's loop, renders only while on screen
+- Footer (`lib/footer.ts`): pixel art on a 2D canvas (1 px = 4 CSS px, 3 on phones, `image-rendering: pixelated`). Driven by the sky engine's loop at ~16 fps, renders only while on screen. Pixel level, not 3D: a toon three.js version was tried and rejected as childish (26 Nov)
 - `/city` is a self-contained static file, `public/city.html`
 - Fonts from the `geist` package via next/font: Geist Serif, Geist. `/city` uses the same files from `public/fonts`. Self-hosted, no Google Fonts requests
 - Dev only: Playwright for screenshots
@@ -32,7 +32,7 @@ Read BRIEF.md and CONTENT.md before any change. reference/04-sky-index.html (the
 - No em dashes anywhere, in copy, UI, comments or commit messages. Use commas, colons or periods
 
 ## Never
-Fish, foliage (the Himalayan deodar forest in the footer is the one approved exception), rusty or dull metal, a dark page in daytime, rainbow palettes, section-title banners, Lorem ipsum, stock icons other than the brand marks.
+Fish, foliage (the pixel Himalayan forest in the footer is the one approved exception), rusty or dull metal, a dark page in daytime, rainbow palettes, section-title banners, Lorem ipsum, stock icons other than the brand marks.
 
 ## Loop for every visual change
 1. Make the change
