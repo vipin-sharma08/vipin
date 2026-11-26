@@ -15,8 +15,9 @@ Job search. Funded fintechs first (founder's office, growth, ops), VC second, Be
 - Daytime looks like day. The screen follows the hour in Bengaluru.
 
 ## Current direction (26 Nov 2026): reference/04-sky-index.html + reference/05-city.html
-- `/`: the Sky page. 672px single column under a dot-sky band (clouds by day, stars at night, rain in monsoon), orb + name, Notes / Projects / Experience rows with LED leader dots, hash pages for Work, Books, Thoughts, Music, draw-on-the-sky egg, auto/day/night/monsoon toggle, pixel tree line at the foot.
-- `?sky=ascii`: same page with unvalley's ascii-sky in the band, to compare.
+- `/`: the Sky page. 672px single column under a dot-sky band (clouds by day, stars at night, rain in monsoon), orb + name, Notes / Projects / Experience rows with LED leader dots, hash pages for Work, Books, Thoughts, Music, draw-on-the-sky egg (dot sky only), auto/day/night/monsoon toggle.
+- Sky band: unvalley's ascii-sky (chosen 26 Nov). `?sky=dots` keeps the LED dot sky for comparison.
+- Footer: Himalayan snow peaks over a deodar forest in three.js. Trees sway in gusting wind, mist drifts through the valleys, light follows day/night/monsoon.
 - `/city`: the live Bengaluru banner on its own.
 
 ## Previous direction (22 Nov 2026): reference/01-dot-screen-variants.html

@@ -1,6 +1,6 @@
 // npm run shots: expects a server on BASE (default http://localhost:3000).
-// 1440x900 @1x, 1280x800 @2x, 390x844 @3x, day and night, for the dot sky and ?sky=ascii,
-// plus a full page, the Work page, and /city. Logs console errors and warnings.
+// 1440x900 @1x, 1280x800 @2x, 390x844 @3x, day and night, for the ASCII sky (default) and ?sky=dots,
+// plus a full page, the Work page, the Himalaya footer in day/night/monsoon, and /city. Logs console errors and warnings.
 import { chromium } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
 
@@ -19,19 +19,26 @@ const open = async (w, h, dpr, url) => {
   return page;
 };
 for (const [w, h, dpr] of sizes) {
-  for (const sky of ['dots', 'ascii']) {
+  for (const sky of ['ascii', 'dots']) {
     for (const theme of ['day', 'night']) {
       const tag = `${w}x${h}@${dpr}x-${sky}-${theme}`;
-      const page = await open(w, h, dpr, `/?theme=${theme}${sky === 'ascii' ? '&sky=ascii' : ''}`);
+      const page = await open(w, h, dpr, `/?theme=${theme}${sky === 'dots' ? '&sky=dots' : ''}`);
       await page.screenshot({ path: `${out}/${tag}.png` });
       if (dpr === 1 || w === 390) await page.screenshot({ path: `${out}/${tag}-full.png`, fullPage: true });
-      if (sky === 'dots') {
+      if (sky === 'ascii') {
         await page.goto(`${BASE}/?theme=${theme}#work`);
         await page.waitForTimeout(1500);
         await page.screenshot({ path: `${out}/${tag}-work.png` });
       }
       await page.close();
     }
+  }
+  for (const theme of ['day', 'night', 'monsoon']) {
+    const page = await open(w, h, dpr, `/?theme=${theme}`);
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForTimeout(2500);
+    await page.screenshot({ path: `${out}/${w}x${h}@${dpr}x-footer-${theme}.png` });
+    await page.close();
   }
   const city = await open(w, h, dpr, '/city');
   await city.screenshot({ path: `${out}/${w}x${h}@${dpr}x-city.png` });

@@ -1,6 +1,7 @@
-// The Sky page engine: dot sky (WebGL), orb, draw-on-the-sky egg, pixel trees, IST clock and theme.
-// Ported from reference/04-sky-index.html. Mode "ascii" swaps the dot sky for the vendored ascii-sky.
+// The Sky page engine: sky band, orb, draw-on-the-sky egg, Himalaya footer, IST clock and theme.
+// Ported from reference/04-sky-index.html. Default sky is the vendored ascii-sky; "dots" is the LED dot sky.
 import { mountSky, type MountedSky } from './ascii-sky';
+import type { Range } from './himalaya';
 
 export type Theme = 'day' | 'night' | 'monsoon';
 export type Pref = 'auto' | Theme;
@@ -15,7 +16,6 @@ const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => 
 const ist = () => new Date(Date.now() + 19800000);
 const istH = () => { const d = ist(); return d.getUTCHours() + d.getUTCMinutes() / 60; };
 const isNight = () => { const h = istH(); return h < 6.1 || h >= 18.5; };
-const th = (n: number) => { const x = Math.sin(n * 127.1 + 3.3) * 43758.5453; return x - Math.floor(x); };
 
 const FS = `precision highp float;
 uniform vec2 R,G; uniform float T,C,D,L; uniform vec3 W,M; uniform sampler2D P;
@@ -214,7 +214,7 @@ export function startSky(mode: SkyMode, forced: Theme | null, assets = '/ascii-s
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       if (!cv.classList.contains('on')) cv.classList.add('on');
     }
-    drawOrb(now); drawTrees(now);
+    drawOrb(now); range?.render(now, dt, w);
     if (!reduce) requestFrame();
   }
   const io = new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) requestFrame(); }); io.observe(cv); observers.push(io);
@@ -240,91 +240,12 @@ export function startSky(mode: SkyMode, forced: Theme | null, assets = '/ascii-s
     octx.globalAlpha = 1;
   }
 
-  /* ---------- footer: a forest edge in pixels, edge to edge ---------- */
-  type Tree = { x: number; h: number; kind: string; ph: number; seed: number; layer: number; hue: number };
-  const tr = $<HTMLCanvasElement>('#trees')!, tg = tr.getContext('2d')!;
-  let TW = 0, TH = 0, TS = 4, trees: Tree[] = [], far: Tree[] = [], tufts: { x: number; h: number; f: number }[] = [], rocks: { x: number; w: number }[] = [], trVis = true, trT0 = 0;
-  let tImg: ImageData | null = null;
-  function treesSize() {
-    TS = innerWidth < 600 ? 3 : 4; const cw = tr.clientWidth, ch = tr.clientHeight; if (!cw) return;
-    TW = Math.ceil(cw / TS); TH = Math.ceil(ch / TS); tr.width = TW; tr.height = TH; tImg = tg.createImageData(TW, TH);
-    const mk = (layer: number, gap: number[], seed: number) => { const out: Tree[] = []; let x = -6, i = seed;
-      while (x < TW + 8) { const r = th(i), kind = r < 0.42 ? 'pine' : r < 0.74 ? 'round' : r < 0.9 ? 'tall' : 'bush';
-        const k = layer === 0 ? 0.7 : layer === 1 ? 0.86 : 1;
-        const h = (kind === 'pine' ? 18 + th(i + 1) * 16 : kind === 'tall' ? 24 + th(i + 1) * 12 : kind === 'bush' ? 5 + th(i + 1) * 4 : 13 + th(i + 1) * 11) * k * (TH / 50);
-        out.push({ x: x | 0, h, kind, ph: th(i + 3) * 6, seed: i * 17.3, layer, hue: th(i + 7) });
-        x += gap[0] + th(i + 5) * gap[1]; i++; }
-      return out; };
-    far = mk(0, [3, 4], 500); trees = mk(1, [5, 6], 100).concat(mk(2, [6, 8], 900));
-    tufts = Array.from({ length: Math.ceil(TW / 2) }, (_, i) => ({ x: i * 2 + ((th(i + 40) * 2) | 0), h: 1 + ((th(i + 41) * 3) | 0), f: th(i + 42) }));
-    rocks = Array.from({ length: Math.ceil(TW / 60) }, (_, i) => ({ x: (th(i + 80) * TW) | 0, w: 3 + ((th(i + 81) * 4) | 0) }));
-    trT0 = 0; requestFrame();
-  }
-  const tro = new ResizeObserver(treesSize); tro.observe(tr); observers.push(tro);
-  const tio = new IntersectionObserver((es) => { trVis = es[0].isIntersecting; if (trVis) requestFrame(); }); tio.observe(tr); observers.push(tio);
-  const mw3 = (d: number[], n: number[], m: number[]) => d.map((v, k) => v * w[0] + n[k] * w[1] + m[k] * w[2]);
-  const shade = (c: number[], f: number) => [c[0] * f, c[1] * f, c[2] * f];
-  function drawTrees(now: number) {
-    if (!trVis || !TW || !tImg || now - trT0 < 60) return; trT0 = now;
-    const t = reduce ? 0 : now / 1000, D = tImg.data; D.fill(0);
-    const set = (x: number, y: number, c: number[], a = 1) => { x |= 0; y |= 0; if (x < 0 || y < 0 || x >= TW || y >= TH) return; const o = (y * TW + x) * 4;
-      if (a >= 1 || !D[o + 3]) { D[o] = c[0]; D[o + 1] = c[1]; D[o + 2] = c[2]; D[o + 3] = 255 * Math.min(1, a + (D[o + 3] ? 1 : 0)); return; }
-      D[o] += (c[0] - D[o]) * a; D[o + 1] += (c[1] - D[o + 1]) * a; D[o + 2] += (c[2] - D[o + 2]) * a; };
-    const G = TH - 4;
-    const LEAF = [mw3([52, 120, 72], [14, 34, 34], [46, 90, 72]), mw3([74, 140, 84], [20, 44, 44], [62, 104, 86]), mw3([38, 96, 60], [12, 28, 30], [36, 74, 60])];
-    const HI = mw3([150, 204, 118], [44, 80, 74], [118, 152, 132]), SH = mw3([22, 62, 44], [6, 14, 18], [24, 48, 42]);
-    const FAR = mw3([150, 190, 176], [24, 38, 58], [132, 152, 150]), BARK = mw3([96, 68, 44], [28, 22, 22], [72, 58, 48]), BARK2 = mw3([64, 44, 30], [18, 14, 14], [50, 40, 34]);
-    const GRASS = mw3([70, 128, 64], [16, 30, 28], [60, 94, 72]), GRASS2 = mw3([104, 160, 80], [26, 46, 40], [86, 120, 92]), SOIL = mw3([84, 70, 52], [20, 18, 18], [62, 56, 50]);
-    const tone = (base: number[], x: number, y: number, r: number, seed: number) => { /* light from the upper left, with dithered leaf texture */
-      const l = (-x * 0.55 - y * 0.8) / (r + 0.01), n = th(x * 3.1 + y * 7.7 + seed);
-      if (l + n * 0.5 > 0.75) return HI; if (l - n * 0.4 < -0.55) return SH; return n > 0.7 ? shade(base, 1.08) : base; };
-    /* far hazy treeline */
-    for (const T of far) { const sway = Math.sin(t * 0.8 + T.ph) * 0.6, base = G - 3;
-      for (let y = 0; y < T.h; y++) { const u = y / T.h, wdt = T.kind === 'pine' ? (1 - u) * T.h * 0.3 : Math.sqrt(Math.max(0, 1 - (2 * u - 1) ** 2)) * T.h * 0.35;
-        for (let x = -wdt; x <= wdt; x++) set(T.x + x + sway * u, base - y, FAR, 0.9); } }
-    for (const T of trees) {
-      const Ly = T.layer, base = Ly === 1 ? G - 1 : G, sw = Math.sin(t * 1.15 + T.ph) * (T.h / 18), F = LEAF[(T.hue * 3) | 0], dim = Ly === 1 ? 0.82 : 1;
-      const col = (c: number[]) => shade(c, dim);
-      if (T.kind === 'bush') { const r = T.h; for (let y = -r; y <= 0; y++) for (let x = -r * 1.6; x <= r * 1.6; x++) { if ((x / 1.6) ** 2 + y * y > r * r * (0.8 + th(x + y * 9 + T.seed) * 0.35)) continue; set(T.x + x, base + y, col(tone(F, x / 1.6, y + r / 2, r, T.seed))); }
-        if (w[0] > 0.5 && th(T.seed) > 0.5) for (let k = 0; k < 3; k++) set(T.x - r + th(T.seed + k) * 2 * r, base - th(T.seed + k + 3) * r, [236, 120, 150]); continue; }
-      const trunkH = T.kind === 'pine' ? 4 : T.kind === 'tall' ? T.h * 0.45 : T.h * 0.42;
-      for (let y = 0; y < trunkH; y++) { const sx = sw * (y / T.h); set(T.x + sx, base - y, col(BARK)); if (T.h > 16) set(T.x + 1 + sx, base - y, col(BARK2)); }
-      set(T.x - 1, base, col(BARK2)); set(T.x + 2, base, col(BARK2));
-      if (T.kind === 'pine') {
-        const tiers = 3 + ((T.h / 10) | 0);
-        for (let y = 0; y < T.h; y++) { const u = y / T.h, tier = (u * tiers) % 1, wdt = (1 - u) * T.h * 0.3 * (0.65 + 0.35 * (1 - tier)) + 1, off = sw * u;
-          for (let x = -wdt; x <= wdt; x++) { let c = x < -wdt * 0.2 ? HI : x > wdt * 0.35 ? SH : F; if (tier > 0.82 && Math.abs(x) > wdt - 1.5) c = SH; if (th(x * 5 + y * 3 + T.seed) > 0.86) c = shade(c, 0.85);
-            set(T.x + x + off, base - 3 - y, col(c)); } }
-        set(T.x + sw, base - 4 - T.h, col(HI));
-      } else {
-        const tall = T.kind === 'tall', r = tall ? T.h * 0.22 : T.h * 0.42, cy = base - trunkH - r * (tall ? 1.6 : 0.7), ry = tall ? 2.1 : 1;
-        /* a few branches */
-        for (let k = 0; k < 2; k++) { const by = base - trunkH * (0.5 + k * 0.25), dir = k ? 1 : -1; for (let j = 1; j < r * 0.7; j++) set(T.x + dir * j + sw * 0.4, by - j * 0.6, col(BARK)); }
-        /* canopy as overlapping clumps */
-        const clumps = 4 + ((r / 3) | 0);
-        for (let c = 0; c < clumps; c++) { const ang = th(T.seed + c) * 6.28, dist = c ? r * 0.55 * th(T.seed + c + 9) : 0, cr = r * (c ? 0.5 + th(T.seed + c + 4) * 0.25 : 0.75);
-          const ccx = Math.cos(ang) * dist, ccy = Math.sin(ang) * dist * ry * 0.8;
-          for (let y = -cr * ry; y <= cr * ry; y++) for (let x = -cr; x <= cr; x++) { const yy = y / ry; if (x * x + yy * yy > cr * cr * (0.82 + th(x * 3 + y * 5 + T.seed + c) * 0.3)) continue;
-            const gx = x + ccx, gy = y + ccy, sway = sw * (1 - ((gy + r * ry) / (2 * r * ry)) * 0.6);
-            set(T.x + gx + sway, cy + gy, col(tone(F, gx, gy / ry, r, T.seed + c))); } }
-        /* fruit or blossom dots on some round trees by day */
-        if (!tall && th(T.seed + 2) > 0.7 && w[1] < 0.5) for (let k = 0; k < 5; k++) set(T.x + (th(T.seed + k * 2) - 0.5) * r * 1.4 + sw, cy + (th(T.seed + k * 2 + 1) - 0.5) * r, th(T.seed) > 0.85 ? [240, 150, 60] : [250, 236, 160]);
-      }
-    }
-    /* ground: soil band, grass tufts, small flowers, rocks */
-    for (let y = G + 1; y < TH; y++) for (let x = 0; x < TW; x++) set(x, y, y === G + 1 ? GRASS : th(x * 1.7 + y * 3.1) > 0.8 ? shade(SOIL, 1.15) : SOIL);
-    for (const r of rocks) for (let x = 0; x < r.w; x++) { set(r.x + x, G, mw3([150, 150, 142], [46, 50, 58], [128, 132, 132])); if (x && x < r.w - 1) set(r.x + x, G - 1, mw3([178, 178, 170], [60, 64, 74], [150, 154, 154])); }
-    for (const g of tufts) { const bend = Math.round(Math.sin(t * 2 + g.x * 0.3) * 0.6);
-      for (let y = 0; y < g.h; y++) set(g.x + (y === g.h - 1 ? bend : 0), G - y, y ? GRASS2 : GRASS);
-      if (g.f > 0.93 && w[1] < 0.5) set(g.x + bend, G - g.h, g.f > 0.97 ? [250, 220, 70] : g.f > 0.95 ? [250, 250, 250] : [236, 120, 170]); }
-    /* fireflies at night, butterflies by day, rain in monsoon */
-    if (w[1] > 0.05) for (let k = 0; k < Math.ceil(TW / 30); k++) { const fx = th(k + 300) * TW + Math.sin(t * 0.5 + k) * 6, fy = G - 3 - th(k + 301) * TH * 0.45 + Math.sin(t * 0.9 + k * 2) * 2, b = 0.5 + 0.5 * Math.sin(t * (2 + th(k) * 3) + k);
-      if (b > 0.45) set(fx, fy, [210, 255, 140], w[1] * b); }
-    if (w[0] > 0.5) for (let k = 0; k < 3; k++) { const bx = ((t * (3 + k) + k * 120) % (TW + 20)) - 10, by = G - 8 - k * 3 + Math.sin(t * 3 + k) * 2, fl = Math.sin(t * 14 + k) > 0;
-      const c = [[250, 200, 60], [240, 240, 250], [120, 170, 250]][k]; set(bx, by, c); if (fl) { set(bx - 1, by - 1, c); set(bx + 1, by - 1, c); } else { set(bx - 1, by, c); set(bx + 1, by, c); } }
-    if (w[2] > 0.05) for (let k = 0; k < TW * 0.4; k++) { const rx = th(k + 600) * TW, ry = (th(k + 601) * TH + t * (30 + th(k) * 20)) % TH; set(rx, ry, [210, 224, 232], 0.45 * w[2]); }
-    tg.putImageData(tImg, 0, 0);
-  }
+  /* ---------- footer: Himalayan peaks over a deodar forest (three.js, loaded on demand) ---------- */
+  let range: Range | null = null;
+  const rc = $<HTMLCanvasElement>('#range');
+  if (rc) import('./himalaya')
+    .then((m) => { if (ac.signal.aborted) return; range = m.startRange(rc, reduce, requestFrame); requestFrame(); })
+    .catch(() => rc.parentElement?.classList.add('flat'));
 
   /* live time and day in Bengaluru */
   function tickNow() { const el = $('#nowT'); if (!el) return; const d = ist(), h = d.getUTCHours(), m = String(d.getUTCMinutes()).padStart(2, '0');
@@ -340,7 +261,7 @@ export function startSky(mode: SkyMode, forced: Theme | null, assets = '/ascii-s
     stop() {
       ac.abort(); cancelAnimationFrame(raf); raf = 0;
       observers.forEach((o) => o.disconnect()); timers.forEach((t) => clearInterval(t));
-      ascii?.stop(); body.classList.remove('drawing', 'no-gl');
+      ascii?.stop(); range?.stop(); body.classList.remove('drawing', 'no-gl');
     },
   };
 }

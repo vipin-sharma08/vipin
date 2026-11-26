@@ -152,4 +152,4 @@ export const views: Record<ViewKey, View> = {
   },
 };
 
-export const ui = { home: '↖ Home', trees: 'A line of trees', clear: 'Clear', done: 'Done' };
+export const ui = { home: '↖ Home', range: 'Snow peaks of the Himalaya above a deodar forest', clear: 'Clear', done: 'Done' };

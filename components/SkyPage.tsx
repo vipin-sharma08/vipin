@@ -80,7 +80,7 @@ export default function SkyPage({ sky, assets }: { sky?: SkyMode; assets?: strin
   const [key, setKey] = useState<Key>('home');
   const [out, setOut] = useState(false);
   const [boot, setBoot] = useState<{ mode: SkyMode; forced: Theme | null } | null>(null);
-  const mode: SkyMode = boot?.mode ?? 'dots';
+  const mode: SkyMode = boot?.mode ?? 'ascii';
   const engine = useRef<Engine | null>(null);
   const cur = useRef<Key | null>(null);
 
@@ -92,7 +92,7 @@ export default function SkyPage({ sky, assets }: { sky?: SkyMode; assets?: strin
     const first = keyOf(location.hash);
     cur.current = first; setKey(first);
     document.body.classList.toggle('sub', first !== 'home');
-    setBoot({ mode: sky ?? (q.get('sky') === 'ascii' ? 'ascii' : 'dots'), forced });
+    setBoot({ mode: sky ?? (q.get('sky') === 'dots' ? 'dots' : 'ascii'), forced });
   }, [sky]);
 
   // start the engine once the sky element for this mode is in the DOM
@@ -132,7 +132,7 @@ export default function SkyPage({ sky, assets }: { sky?: SkyMode; assets?: strin
     <main>
       <header className="top"><a className="mark" href="#" aria-label={identity.name + ', home'}>{home.first}</a><button id="theme" /></header>
       <div id="view" className={out ? 'out' : undefined}>{key === 'home' ? <Home egg={mode === 'dots'} /> : <Sub k={key} />}</div>
-      <div className="tick"><canvas id="trees" role="img" aria-label={ui.trees} /></div>
+      <div className="range"><canvas id="range" role="img" aria-label={ui.range} /></div>
       <footer><span>{identity.copyright}</span><span className="now"><i /><span id="nowT" /></span></footer>
     </main>
   </>;

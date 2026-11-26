@@ -12,3 +12,5 @@
 - 2026-11-26: Removed the 2x2 dot screen, Notes sheet, three and lil-gui
 - 2026-11-26: SkyPage takes optional sky and assets props (used by the Artifact preview)
 - 2026-11-26: /city gets a Home pill so it isn't a dead end
+- 2026-11-26: ASCII sky is the default; the dot sky moves to ?sky=dots
+- 2026-11-26: Footer: pixel trees replaced by a three.js Himalaya (snow peaks, forested ridges, swaying deodars, drifting mist), three 0.187.0 pinned and loaded on demand

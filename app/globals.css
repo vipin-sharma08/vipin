@@ -10,7 +10,6 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.75 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip;transition:background-color .9s,color .9s}
 #sky{position:absolute;top:0;left:0;width:100%;height:var(--skyh);display:block;z-index:0;opacity:0;transition:opacity 1s,height .6s var(--ease)}
 #sky.on{opacity:1}
-#trees{display:block;width:100%;height:clamp(150px,14vw,200px);image-rendering:pixelated}
 body.no-gl #sky{opacity:1;background:linear-gradient(#2b7acc,#b3d9f2 40%,transparent 82%)}
 body.no-gl.night #sky{background:linear-gradient(#030a26,#0b1a44 40%,transparent 82%)}
 #pad{position:absolute;top:0;left:0;right:0;height:var(--top);z-index:3;display:none;touch-action:none;cursor:crosshair}
@@ -71,7 +70,9 @@ a.row:hover .d,a.row:focus-visible .d{color:var(--text)}
 .items b{font-weight:500;color:var(--ink);font-size:15px}
 .items p{margin:2px 0 0;font-size:14px;line-height:1.6;color:var(--mute)}
 .fine{margin:12px 0 0;font-size:13px;color:var(--mute)}
-.tick{margin:80px 0 0 50%;transform:translateX(-50%);width:100vw}
+.range{position:relative;margin:56px 0 0 50%;transform:translateX(-50%);width:100vw;height:clamp(240px,27vw,400px)}
+#range{display:block;width:100%;height:100%;-webkit-mask-image:linear-gradient(#000 74%,transparent);mask-image:linear-gradient(#000 74%,transparent)}
+.range.flat::before{content:"";position:absolute;inset:0;background:linear-gradient(color-mix(in srgb,var(--mute) 40%,var(--bg)),color-mix(in srgb,var(--ink) 70%,var(--bg)) 70%,var(--bg));clip-path:polygon(0 70%,12% 48%,22% 60%,34% 30%,42% 44%,50% 14%,58% 40%,68% 28%,80% 52%,90% 40%,100% 58%,100% 100%,0 100%)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 footer{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:0;padding:18px 0 28px;font-size:14px;color:var(--mute)}
 #hint{position:fixed;z-index:9;top:14px;left:50%;display:flex;gap:10px;align-items:center;padding:5px 5px 5px 14px;border-radius:99px;background:rgba(5,7,13,.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#f1f3f7;font-size:13px;line-height:1;box-shadow:0 8px 28px -10px rgba(0,0,0,.5);opacity:0;transform:translate(-50%,-10px);pointer-events:none;transition:opacity .3s,transform .4s var(--ease)}
@@ -87,7 +88,7 @@ body.drawing #hint{opacity:1;transform:translate(-50%,0);pointer-events:auto}
   .row{flex-direction:column;align-items:flex-start;gap:0;padding:6px 0}
   .row .lead{display:none}
   .row .d{text-align:left;max-width:none;white-space:normal}
-  .tick{margin-top:60px;width:100vw}
+  .range{margin-top:40px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 /* ascii-sky variant (?sky=ascii): same band, same fade into the page */
