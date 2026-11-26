@@ -93,8 +93,10 @@ body.drawing #hint{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 /* ascii-sky variant (?sky=ascii): same band, same fade into the page */
-#asciiwrap{position:absolute;top:0;left:0;width:100%;height:var(--skyh);z-index:0;overflow:hidden;pointer-events:none;transition:height .6s var(--ease);-webkit-mask-image:linear-gradient(#000 16%,transparent 80%);mask-image:linear-gradient(#000 16%,transparent 80%)}
-#ascii{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1s}
+/* the canvas covers only the visible 80% of the band; a flat gradient in the page colour fades it (cheaper than a CSS mask over a live canvas) */
+#asciiwrap{position:absolute;top:0;left:0;width:100%;height:var(--skyh);z-index:0;overflow:hidden;pointer-events:none;transition:height .6s var(--ease)}
+#asciiwrap::after{content:"";position:absolute;left:0;right:0;top:0;height:80%;background:linear-gradient(transparent 20%,var(--bg))}
+#ascii{position:absolute;left:0;top:0;width:100%;height:80%;display:block;opacity:0;transition:opacity 1s}
 #ascii.on{opacity:1}
 body.no-gl #asciiwrap{background:linear-gradient(#2b7acc,#b3d9f2 40%,transparent 82%)}
 body.no-gl.night #asciiwrap{background:linear-gradient(#030a26,#0b1a44 40%,transparent 82%)}

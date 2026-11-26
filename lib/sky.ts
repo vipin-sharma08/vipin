@@ -140,7 +140,8 @@ export function startSky(mode: SkyMode, forced: Theme | null, assets = '/ascii-s
   } else {
     const box = $<HTMLCanvasElement>('#ascii');
     if (box) {
-      ascii = mountSky(box, { theme: ASCII_THEME[isNight() ? 'night' : 'day'], assets });
+      // rows below the top third fade out under the overlay, so they redraw on alternate frames
+      ascii = mountSky(box, { theme: ASCII_THEME[isNight() ? 'night' : 'day'], assets, faintFrom: Math.round(box.clientHeight * 0.35) });
       ascii.ready.then(() => box.classList.add('on')).catch(() => body.classList.add('no-gl'));
     }
   }

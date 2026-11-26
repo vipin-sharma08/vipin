@@ -23,9 +23,11 @@ import {
   TURNS,
 } from "./shade";
 
-export const FULL_RATE = 60;
-export const HALF_RATE = 30;
-export const STEP: number = 1 / FULL_RATE;
+// the sky moves a whole character cell at a time, so 30 fps reads as smooth; halves the compositing cost
+export const FULL_RATE = 30;
+export const HALF_RATE = 20;
+// physics keeps its original 1/60 s step; only the drawing rate dropped
+export const STEP: number = 1 / 60;
 const MAX_STEPS = 4;
 const MAX_DT = 0.1;
 const MS_PER_SECOND = 1000;
@@ -35,7 +37,8 @@ const SLOW_MS = 8;
 const QUICK_MS = 5;
 const EARLY_MS = 1.5;
 const RETRY_MS = 5000;
-const MOST_DPR = 3;
+// capped at 2 (site rule): at 3x every full-canvas composite pass moves 2.25x the pixels for no visible gain
+const MOST_DPR = 2;
 export const CONTROLS = "a, button, input, textarea, select, label, [role]";
 
 export const beat = (drawnAt: number, rate: number, now: number): number => {
