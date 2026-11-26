@@ -11,3 +11,4 @@
 - 2026-11-26: `/city` serves the Bengaluru banner (reference/05), Google Fonts swapped for self-hosted Geist
 - 2026-11-26: Removed the 2x2 dot screen, Notes sheet, three and lil-gui
 - 2026-11-26: SkyPage takes optional sky and assets props (used by the Artifact preview)
+- 2026-11-26: /city gets a Home pill so it isn't a dead end

@@ -2430,5 +2430,7 @@ addEventListener('resize',size);size();
 function f(n){const dt=Math.min(.1,(n-last)/1000);last=n;const h=window.__banHour!==undefined?window.__banHour:(new Date(Date.now()+19800000)).getUTCHours(),night=h<6||h>=19;g.clearRect(0,0,W,H);
 for(const k of cl){if(!red)k.x-=k.v*dt;if(k.x+k.w<0){Object.assign(k,mk(W+rnd()*20));}
 for(const [i,y,b] of k.px){const v=night?b*.32:b;g.fillStyle=`rgba(${night?'150,165,210':'255,255,255'},${v*.9})`;g.fillRect((k.x+i)|0,(k.y+y)|0,1,1);}}
-requestAnimationFrame(f);}requestAnimationFrame(f);}</script></body>
+requestAnimationFrame(f);}requestAnimationFrame(f);}</script><a id="back" href="/" onclick="if(history.length>1&&document.referrer){event.preventDefault();history.back()}">↖ Home</a>
+<style>#back{position:fixed;z-index:50;left:max(16px,calc(env(safe-area-inset-left,0px) + 16px));top:calc(env(safe-area-inset-top,0px) + 16px);height:32px;padding:0 14px;border-radius:99px;background:rgba(5,7,13,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#f1f3f7;font:500 13px/32px "Geist",-apple-system,"Helvetica Neue",Arial,sans-serif;text-decoration:none;box-shadow:0 8px 24px -12px rgba(0,0,0,.5)}#back:hover{background:rgba(5,7,13,.9)}#back:focus-visible{outline:2px solid #f1f3f7;outline-offset:3px}</style>
+</body>
 </html>
