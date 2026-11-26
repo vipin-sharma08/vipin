@@ -16,3 +16,4 @@
 - 2026-11-26: Footer: pixel trees replaced by a three.js Himalaya (snow peaks, forested ridges, swaying deodars, drifting mist), three 0.187.0 pinned and loaded on demand
 - 2026-11-26: Footer reworked around the trees: meadow of deodars, blue pines and rhododendrons, toon-shaded; cursor breeze, click to boing, tap grass for a gust
 - 2026-11-26: Footer back to pixel art: old pixel forest plus deodars and rhododendrons, pixel Himalaya behind (couloirs, plume, clouds, birds, stars); three.js removed
+- 2026-11-26: Footer: natural peaks (uneven slopes, shoulders, toothed crests, aretes, rock patches, paler back range) and two Himachali homes (kath-kuni house with chimney smoke, stone hut with woodpile), windows glow at night
