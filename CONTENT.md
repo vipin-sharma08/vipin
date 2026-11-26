@@ -131,3 +131,9 @@ Keep a `NUMBER_DEMO = true` flag and a visible "Preview" line until a backend ex
 - [ ] Contact email to show (or keep it behind "Get my number")
 - [ ] Resume PDF, if wanted
 - [ ] The two images: LED dot-screen reference, Notes screenshot
+
+## Sky page (26 Nov 2026, from reference/04)
+The live site uses this copy; `content.ts` holds it word for word. Sections above that the Sky page doesn't show (the 2x2 words, sheet chrome) are kept for history.
+- Home: "Founder’s Office at Incentiv. Open to fintech growth and ops roles." / "You can reach me on GitHub, LinkedIn, X and Substack."
+- Notes rows: Work, Books, Thoughts, Music. Projects rows: the six Incentiv builds plus MemoAI, each with a short line. Experience rows: Incentiv, FLAME University, WhiteSight, Deccan Nutraceuticals.
+- Music (SAMPLE LIST, TODO replace): Kun Faya Kun, Intro, Iktara, Nuvole Bianche, Midnight City

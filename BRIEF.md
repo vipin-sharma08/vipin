@@ -14,7 +14,12 @@ Job search. Funded fintechs first (founder's office, growth, ops), VC second, Be
 - High contrast. Text always clearly readable.
 - Daytime looks like day. The screen follows the hour in Bengaluru.
 
-## Current direction (22 Nov 2026): reference/01-dot-screen-variants.html
+## Current direction (26 Nov 2026): reference/04-sky-index.html + reference/05-city.html
+- `/`: the Sky page. 672px single column under a dot-sky band (clouds by day, stars at night, rain in monsoon), orb + name, Notes / Projects / Experience rows with LED leader dots, hash pages for Work, Books, Thoughts, Music, draw-on-the-sky egg, auto/day/night/monsoon toggle, pixel tree line at the foot.
+- `?sky=ascii`: same page with unvalley's ascii-sky in the band, to compare.
+- `/city`: the live Bengaluru banner on its own.
+
+## Previous direction (22 Nov 2026): reference/01-dot-screen-variants.html
 - Whole viewport = LED dot screen. Gradient runs diagonally: warm white top-left, through pale blue and azure, to navy and black bottom-right. Slow noise drift.
 - 2x2 grid, one word per cell, regular weight, large.
 - Words flip ink dark/light automatically based on the screen under them.
@@ -83,7 +88,8 @@ Only if the feature comes back (see open decisions). Copy is in CONTENT.md.
 | Nov 2026 | Monochrome card over frosted foliage, fish variants | Fish killed |
 | 21 Nov | Bengaluru pixel city behind the card (reference/03) | Side experiment |
 | 22 Nov | Chrome card: socials, music, number flow, multilingual welcome, annotated city + hour ruler (reference/02) | "Too dull", dark in daytime |
-| 22 Nov | **LED dot screen, card gone, 2x2 words, Notes sheet (reference/01)** | **Current** |
+| 22 Nov | LED dot screen, card gone, 2x2 words, Notes sheet (reference/01) | Superseded |
+| 26 Nov | **Sky page + city page (reference/04, 05)** | **Current** |
 
 Never again: fish, foliage, rusty or dull metal, a dark page in daytime, rainbow palettes, section-title banners, motion behind text while someone is reading (calm the screen when a note is open).
 

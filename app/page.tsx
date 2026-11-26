@@ -1,5 +1,5 @@
-import Site from '@/components/Site';
+import SkyPage from '@/components/SkyPage';
 
 export default function Page() {
-  return <Site />;
+  return <SkyPage />;
 }

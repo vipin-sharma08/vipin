@@ -6,3 +6,7 @@
 - 2026-11-22: 2x2 words in Geist Serif, CPU ink contrast (no readbacks), Notes sheet, copy from content.ts
 - 2026-11-22: Billboard + Mood ships; Billboard, Torch, Magnet, Mood kept on ?v=1..4 in dev
 - 2026-11-22: Favicon from the dot motif, meta and OG tags, OG image rendered from the live screen
+- 2026-11-26: Rebuilt as the Sky page (reference/04) at `/`: dot sky, orb, rows, Work/Books/Thoughts/Music pages, draw egg, theme toggle, pixel trees. Copy moved into content.ts
+- 2026-11-26: `?sky=ascii` variant using unvalley/ascii-sky (MIT, vendored)
+- 2026-11-26: `/city` serves the Bengaluru banner (reference/05), Google Fonts swapped for self-hosted Geist
+- 2026-11-26: Removed the 2x2 dot screen, Notes sheet, three and lil-gui
