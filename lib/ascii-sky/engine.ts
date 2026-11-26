@@ -37,8 +37,8 @@ const SLOW_MS = 8;
 const QUICK_MS = 5;
 const EARLY_MS = 1.5;
 const RETRY_MS = 5000;
-// capped at 2 (site rule): at 3x every full-canvas composite pass moves 2.25x the pixels for no visible gain
-const MOST_DPR = 2;
+// native resolution up to 3x: below that the browser upscales the canvas and every glyph goes soft (tried 2, 26 Nov)
+const MOST_DPR = 3;
 export const CONTROLS = "a, button, input, textarea, select, label, [role]";
 
 export const beat = (drawnAt: number, rate: number, now: number): number => {

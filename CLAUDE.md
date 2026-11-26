@@ -5,7 +5,7 @@ Read BRIEF.md and CONTENT.md before any change. reference/04-sky-index.html (the
 ## Stack
 - Next.js 15 (App Router), React 19, TypeScript, deployed on Vercel
 - Plain CSS: tokens as custom properties in `app/globals.css`, CSS modules per component. No Tailwind, no CSS-in-JS, no UI kits
-- Sky page (`lib/sky.ts`): ascii-sky in the top band (MIT, vendored in `lib/ascii-sky`, assets in `public/ascii-sky`; local changes: DPR capped at 2, drawing at 30 fps with physics still at 1/60 s); `?sky=dots` swaps in the LED dot-sky shader. 2D canvas for the orb
+- Sky page (`lib/sky.ts`): ascii-sky in the top band (MIT, vendored in `lib/ascii-sky`, assets in `public/ascii-sky`; local changes: drawing at 30 fps with physics still at 1/60 s; it keeps native DPR up to 3, because a 2x cap made the glyphs blurry on phones); `?sky=dots` swaps in the LED dot-sky shader. 2D canvas for the orb
 - Footer (`lib/footer.ts`): pixel art on a 2D canvas (1 px = 4 CSS px, 3 on phones, `image-rendering: pixelated`). Driven by the sky engine's loop at ~16 fps, renders only while on screen. Pixel level, not 3D: a toon three.js version was tried and rejected as childish (26 Nov)
 - `/city` is a self-contained static file, `public/city.html`
 - Fonts from the `geist` package via next/font: Geist Serif, Geist. `/city` uses the same files from `public/fonts`. Self-hosted, no Google Fonts requests

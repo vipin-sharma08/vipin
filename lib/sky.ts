@@ -223,7 +223,7 @@ export function startSky(mode: SkyMode, forced: Theme | null, assets = '/ascii-s
 
   /* ---------- the orb: a dot-matrix sphere, lit by a slowly turning light ---------- */
   let orb: HTMLCanvasElement | null = null, octx: CanvasRenderingContext2D | null = null, orbT = 0;
-  function orbSetup() { orb = $<HTMLCanvasElement>('#orb'); if (!orb) return; const d = Math.min(devicePixelRatio || 1, 2); orb.width = orb.height = Math.round(46 * d); octx = orb.getContext('2d'); orbDirty = true; }
+  function orbSetup() { orb = $<HTMLCanvasElement>('#orb'); if (!orb) return; const d = Math.min(devicePixelRatio || 1, 3); orb.width = orb.height = Math.round(46 * d); octx = orb.getContext('2d'); orbDirty = true; }
   function drawOrb(now: number) {
     if (!orb || !octx || !orb.isConnected) return;
     if (!orbDirty && (reduce || now - orbT < 70)) return; orbT = now; orbDirty = false;
