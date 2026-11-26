@@ -64,7 +64,7 @@ void main(){
   gl_FragColor = vec4(o * a, a);
 }`;
 
-export function startSky(mode: SkyMode, forced: Theme | null): Engine {
+export function startSky(mode: SkyMode, forced: Theme | null, assets = '/ascii-sky/'): Engine {
   const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector(s) as T | null;
   const body = document.body;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -140,7 +140,7 @@ export function startSky(mode: SkyMode, forced: Theme | null): Engine {
   } else {
     const box = $<HTMLCanvasElement>('#ascii');
     if (box) {
-      ascii = mountSky(box, { theme: ASCII_THEME[isNight() ? 'night' : 'day'], assets: '/ascii-sky/' });
+      ascii = mountSky(box, { theme: ASCII_THEME[isNight() ? 'night' : 'day'], assets });
       ascii.ready.then(() => box.classList.add('on')).catch(() => body.classList.add('no-gl'));
     }
   }

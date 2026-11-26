@@ -76,7 +76,7 @@ function Sub({ k }: { k: ViewKey }) {
   </>;
 }
 
-export default function SkyPage() {
+export default function SkyPage({ sky, assets }: { sky?: SkyMode; assets?: string } = {}) {
   const [key, setKey] = useState<Key>('home');
   const [out, setOut] = useState(false);
   const [boot, setBoot] = useState<{ mode: SkyMode; forced: Theme | null } | null>(null);
@@ -92,15 +92,15 @@ export default function SkyPage() {
     const first = keyOf(location.hash);
     cur.current = first; setKey(first);
     document.body.classList.toggle('sub', first !== 'home');
-    setBoot({ mode: q.get('sky') === 'ascii' ? 'ascii' : 'dots', forced });
-  }, []);
+    setBoot({ mode: sky ?? (q.get('sky') === 'ascii' ? 'ascii' : 'dots'), forced });
+  }, [sky]);
 
   // start the engine once the sky element for this mode is in the DOM
   useEffect(() => {
     if (!boot) return;
-    engine.current = startSky(boot.mode, boot.forced);
+    engine.current = startSky(boot.mode, boot.forced, assets);
     return () => { engine.current?.stop(); engine.current = null; };
-  }, [boot]);
+  }, [boot, assets]);
 
   // router: fade the column out, swap, fade back in
   useEffect(() => {
