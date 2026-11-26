@@ -1,0 +1,29 @@
+{
+  "name": "vipin-site",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "shots": "node scripts/shots.mjs",
+    "shots:ref": "node scripts/shots-ref.mjs",
+    "og": "node scripts/og.mjs"
+  },
+  "dependencies": {
+    "geist": "1.9.2",
+    "next": "15.5.29",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/three": "0.187.0",
+    "lil-gui": "0.21.0",
+    "typescript": "5.9.3"
+  }
+}

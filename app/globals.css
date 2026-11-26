@@ -1,0 +1,77 @@
+/* Tokens. Hexes match the shader ramp in lib/screen.ts one for one. */
+:root {
+  --ramp-white: #edf6eb;
+  --ramp-pale: #a3d1ed;
+  --ramp-azure: #3080cc;
+  --ramp-deep: #08297a;
+  --ramp-navy: #030d30;
+  --ramp-black: #010206;
+  --led: #d1ffe6;
+
+  --ink-dark: #0b0f1a;
+  --ink-light: #f3f6fa;
+  --glow-dark: rgba(240, 246, 250, 0.75);
+  --glow-light: rgba(0, 4, 14, 0.7);
+
+  --sheet-bg: #ffffff;
+  --sheet-title: #1c1c1e;
+  --sheet-body: #3a3a3c;
+  /* reference uses #8e8e93 / #aeaeb2 here; both fail WCAG AA on white, so darkened */
+  --sheet-secondary: #6e6e73;
+  --sheet-muted: #636366;
+  --sheet-soon: #6e6e73;
+  --sheet-divider: #efeff2;
+  --sheet-underline: #c7c7cc;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-sheet: cubic-bezier(0.2, 0.9, 0.2, 1);
+
+  --font-display: var(--font-geist-serif), 'Times New Roman', serif;
+  --font-body: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-label: var(--font-geist-mono), ui-monospace, Menlo, monospace;
+  --font-pixel: var(--font-geist-pixel-square), var(--font-geist-mono), monospace;
+
+  --word-size: clamp(40px, 4.8vw, 68px);
+  --sheet-w: 470px;
+  --sheet-radius: 30px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ramp-black);
+  color: var(--ink-dark);
+  overflow: hidden;
+  font: 17px/1.5 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

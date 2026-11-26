@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vipin Sharma</title>
+<style>
+/* VOICE   a note you'd keep on your phone, shown on a giant LED screen: plain words, playful light
+   IDEA    an LED dot screen in a soft diagonal light, with four words on it like a notes list: Name, Work, Books, Thoughts
+   PICTURE the whole viewport is the screen; the words sit 2 by 2; each variant plays with the dots differently
+   COLOUR  warm white, pale blue, azure, navy, black; a little mint in the highlights; follows day and night in Bengaluru
+   TYPE    the system UI face (SF on Apple), regular weight, like Notes; a mono only for the tiny switcher
+   LAYOUT  2x2 words fill the screen; a white note sheet opens on the right (bottom sheet on phones) */
+:root{--ink:#0b0f1a}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:#02040a;color:#0b0f1a;overflow:hidden;font:17px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;touch-action:manipulation}
+#s{position:fixed;inset:0;width:100%;height:100%;display:block}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+.grid{position:fixed;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .6s}
+.cell{display:grid;place-items:center;position:relative}
+.w{position:relative;font:400 clamp(34px,4.6vw,64px)/1.1 -apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Helvetica Neue",Arial,sans-serif;letter-spacing:-.02em;color:var(--c,#0b0f1a);text-shadow:0 0 18px var(--g,rgba(255,255,255,.5)),0 0 2px var(--g,rgba(255,255,255,.5));padding:14px 22px;border-radius:18px;transition:color .5s,text-shadow .5s,opacity .6s,transform .5s cubic-bezier(.2,.8,.2,1);opacity:0;transform:translateY(10px);user-select:none;-webkit-user-select:none;touch-action:none;will-change:transform}
+body.in .w{opacity:1;transform:none}
+body.in .cell:nth-child(2) .w{transition-delay:.08s}body.in .cell:nth-child(3) .w{transition-delay:.16s}body.in .cell:nth-child(4) .w{transition-delay:.24s}
+.w:focus-visible{outline:1.5px solid currentColor;outline-offset:4px}
+.w small{display:block;margin-top:10px;font:500 11px/1 ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;opacity:.55;text-align:center}
+.w i{position:absolute;left:22px;right:22px;bottom:30px;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.v2 .w:hover i,.v2 .w.on i{transform:none}
+body.open .grid{opacity:.35}
+body.open.wide .grid{transform:translateX(-14vw) scale(.82)}
+#meta{position:fixed;left:18px;bottom:16px;font:500 11px/1 ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--m,#eef2f7);opacity:.7;transition:color .5s}
+#sw{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:2px;padding:4px;border-radius:99px;background:rgba(4,8,18,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+#sw button{height:30px;padding:0 13px;border-radius:99px;font:500 11px/1 ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.08em;text-transform:uppercase;color:rgba(238,242,247,.62);white-space:nowrap}
+#sw button[aria-pressed=true]{background:#eef2f7;color:#05070d}
+#sw button:hover{color:#eef2f7}#sw button[aria-pressed=true]:hover{color:#05070d}
+#tip{position:fixed;right:18px;bottom:16px;font:400 13px/1.3 -apple-system,BlinkMacSystemFont,"Inter",sans-serif;color:var(--m,#eef2f7);opacity:.7;transition:color .5s,opacity .5s;text-align:right;max-width:22em}
+#note{position:fixed;top:14px;right:14px;bottom:14px;width:min(470px,calc(100vw - 28px));background:#fff;color:#1c1c1e;border-radius:30px;box-shadow:0 30px 80px -20px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.04);transform:translateX(calc(100% + 30px));transition:transform .7s cubic-bezier(.2,.9,.2,1);display:flex;flex-direction:column;overflow:hidden}
+body.open #note{transform:none}
+.nh{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 0}
+.rb{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.09),0 0 0 1px rgba(0,0,0,.03)}
+.rb svg{width:22px;height:22px;fill:none;stroke:#1c1c1e;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.rb:focus-visible{outline:2px solid #1c1c1e;outline-offset:2px}
+.stamp{margin:12px 0 0;text-align:center;color:#8e8e93;font-size:15px;font-variant-numeric:tabular-nums}
+#nb{flex:1;overflow-y:auto;padding:26px 30px 40px;overscroll-behavior:contain}
+#nb h2{margin:0 0 14px;font:600 30px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Display","Inter",sans-serif;letter-spacing:-.02em;color:#1c1c1e}
+#nb p{margin:0 0 14px;color:#3a3a3c;font-size:17px;line-height:1.5}
+#nb h3{margin:26px 0 8px;font:600 13px/1.2 -apple-system,BlinkMacSystemFont,"Inter",sans-serif;color:#8e8e93;letter-spacing:.01em}
+#nb ul{list-style:none;margin:0;padding:0}
+#nb li{padding:11px 0;border-bottom:1px solid #efeff2;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 14px;align-items:baseline}
+#nb li b{font-weight:500;color:#1c1c1e}
+#nb li span{color:#8e8e93;font-size:15px;text-align:right}
+#nb li em{grid-column:1/-1;font-style:normal;color:#6c6c70;font-size:15px;line-height:1.45}
+#nb a{color:#1c1c1e;text-decoration:underline;text-decoration-color:#c7c7cc;text-underline-offset:3px}
+#nb a:hover{text-decoration-color:#1c1c1e}
+#nb .soon{color:#aeaeb2}
+#nb .fine{margin-top:18px;font-size:13px;color:#aeaeb2}
+#nb .ln{opacity:0;transform:translateY(6px);transition:opacity .5s,transform .6s cubic-bezier(.2,.8,.2,1)}
+#nb.go .ln{opacity:1;transform:none}
+.caret{display:inline-block;width:2px;height:.95em;background:#1c1c1e;margin-left:2px;vertical-align:-.1em;animation:bk 1s steps(1) infinite}
+@keyframes bk{50%{opacity:0}}
+@media (max-width:760px){
+  .w{font-size:clamp(30px,9vw,44px);padding:12px 14px}
+  .w small{display:none}
+  #note{top:auto;left:8px;right:8px;width:auto;height:min(78svh,640px);bottom:8px;border-radius:28px;transform:translateY(calc(100% + 20px))}
+  #nb{padding:20px 22px 34px}
+  #meta{display:none}#tip{display:none}
+  #sw{bottom:10px}#sw button{padding:0 10px}
+  body.open .grid{opacity:.25}
+}
+@media (prefers-reduced-motion:reduce){.w,#note,.grid,#nb .ln{transition:none}.caret{animation:none}}
+</style>
+</head>
+<body class="v1">
+<canvas id="s" aria-hidden="true"></canvas>
+<main class="grid" aria-label="Vipin Sharma">
+  <div class="cell"><button class="w" data-k="name"><span class="t">Name</span><i></i></button></div>
+  <div class="cell"><button class="w" data-k="work"><span class="t">Work</span><i></i></button></div>
+  <div class="cell"><button class="w" data-k="books"><span class="t">Books</span><i></i></button></div>
+  <div class="cell"><button class="w" data-k="thoughts"><span class="t">Thoughts</span><i></i></button></div>
+</main>
+<div id="meta">Bengaluru · <span id="clk"></span></div>
+<div id="tip"></div>
+<nav id="sw" aria-label="Variants">
+  <button data-v="1" aria-pressed="true">1 Billboard</button>
+  <button data-v="2" aria-pressed="false">2 Torch</button>
+  <button data-v="3" aria-pressed="false">3 Magnet</button>
+  <button data-v="4" aria-pressed="false">4 Mood</button>
+</nav>
+<aside id="note" aria-hidden="true" aria-labelledby="nt">
+  <div class="nh">
+    <button class="rb" id="back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button class="rb" id="next" aria-label="Next note"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  </div>
+  <p class="stamp" id="stamp"></p>
+  <div id="nb"></div>
+</aside>
+
+<script>
+{
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- the notes ---------- */
+const NOTES = {
+  name:{title:'Vipin Sharma', html:`
+    <p class="ln">Founder’s Office at Incentiv, a private markets infrastructure company in Bengaluru.</p>
+    <p class="ln">I build the tools, data and outbound engines a small finance team runs on. I work where AI meets financial decisions.</p>
+    <p class="ln">MBA in Finance and Business Analytics, FLAME University, 2026. Originally from Jodhpur.</p>
+    <h3 class="ln">Looking for</h3>
+    <p class="ln">Founder’s office, growth and ops roles at funded fintechs. Bengaluru or remote.</p>
+    <h3 class="ln">Elsewhere</h3>
+    <ul class="ln">
+      <li><b><a href="https://github.com/vipin-sharma08" target="_blank" rel="noopener">GitHub</a></b><span>vipin-sharma08</span></li>
+      <li><b class="soon">LinkedIn</b><span>soon</span></li>
+      <li><b class="soon">X</b><span>soon</span></li>
+      <li><b class="soon">Substack</b><span>WIRTW, soon</span></li>
+      <li><b class="soon">Get my number</b><span>soon</span></li>
+    </ul>`},
+  work:{title:'Work', html:`
+    <h3 class="ln">Incentiv, Founder’s Office · since June 2026</h3>
+    <ul class="ln">
+      <li><b>Funding-leads engine</b><em>Every morning it sweeps Indian funding news, finds the CEO and finance lead at each newly funded company, enriches them and queues them for review.</em></li>
+      <li><b>ESOP pool calculator</b><em>A sizing tool for founders on incentiv.finance/tools.</em></li>
+      <li><b>Grant</b><em>Founders enter a few inputs and download a ready ESOP grant letter.</em></li>
+      <li><b>India funding map</b><em>Click a city to see its funded startups and founders.</em></li>
+      <li><b>Folio blog pipeline</b><em>Research, write, audit, design and publish, as one pipeline.</em></li>
+      <li><b>SEBI RIA register</b><em>A scraper and clean dataset of registered investment advisers.</em></li>
+    </ul>
+    <h3 class="ln">Side builds</h3>
+    <ul class="ln">
+      <li><b><a href="https://memo-ai-eosin.vercel.app" target="_blank" rel="noopener">MemoAI</a></b><em>An AI investment memo generator on the Claude API and n8n.</em></li>
+      <li><b>Adani Green IVM</b><em>An integrated value and ESG workbook.</em></li>
+    </ul>
+    <h3 class="ln">Before</h3>
+    <ul class="ln">
+      <li><b>WhiteSight</b><span>Fintech research</span></li>
+      <li><b>Deccan Nutraceuticals</b><span>Finance and MIS</span></li>
+    </ul>`},
+  books:{title:'Books', html:`
+    <p class="ln">What’s on the desk right now.</p>
+    <ul class="ln">
+      <li><b>Superforecasting</b><span>Philip Tetlock</span></li>
+      <li><b>Poor Charlie’s Almanack</b><span>Charles T. Munger</span></li>
+      <li><b>High Output Management</b><span>Andrew S. Grove</span></li>
+      <li><b>The Alchemy of Finance</b><span>George Soros</span></li>
+    </ul>
+    <p class="fine ln">Sample list, to swap for the real one.</p>`},
+  thoughts:{title:'Thoughts', html:`
+    <p class="ln">I write WIRTW, a weekly note on markets and AI, on Substack and LinkedIn.</p>
+    <h3 class="ln">On my mind</h3>
+    <ul class="ln">
+      <li><b>Prediction markets</b><span>and thinking in odds</span></li>
+      <li><b>Indian private markets</b><span>funds, founders, ESOPs</span></li>
+      <li><b>AI and money</b><span>how decisions get made</span></li>
+    </ul>
+    <h3 class="ln">In the drafts</h3>
+    <ul class="ln"><li><b>Who owns Anthropic isn’t who runs it</b></li></ul>`}
+};
+const ORDER = ['name', 'work', 'books', 'thoughts'];
+
+/* ---------- time in Bengaluru, day and night ---------- */
+const ist = () => new Date(Date.now() + 19800000);
+const istHour = () => { const d = ist(); return d.getUTCHours() + d.getUTCMinutes() / 60; };
+const sm = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+const nightOf = h => 1 - sm(5.6, 6.7, h) + sm(17.6, 18.9, h);
+let forceNight = null;
+const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const tick = () => { const d = ist(), hh = String(d.getUTCHours()).padStart(2, '0'), mm = String(d.getUTCMinutes()).padStart(2, '0');
+  $('#clk').textContent = hh + ':' + mm + ' IST'; $('#stamp').textContent = d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear() + ' at ' + hh + ':' + mm; };
+tick(); setInterval(tick, 10000);
+
+/* ---------- the LED screen ---------- */
+const cv = $('#s'), gl = cv.getContext('webgl', {antialias:false, preserveDrawingBuffer:false});
+const VS = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+const FS = `precision highp float;
+uniform vec2 res,mouse,grid,focus;uniform float time,dpr,night,mode,textAmt,push,focusAmt,tintAmt,reveal,cellPx;uniform vec3 tint;uniform vec4 rip;uniform sampler2D tex;
+float h21(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+float vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h21(i),h21(i+vec2(1,0)),f.x),mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<4;i++){s+=a*vn(p);p=p*2.03+17.1;a*=.5;}return s;}
+vec3 ramp(float s){
+  vec3 c=mix(vec3(.93,.965,.92),vec3(.64,.82,.93),smoothstep(0.,.55,s));
+  c=mix(c,vec3(.19,.5,.8),smoothstep(.48,.78,s));c=mix(c,vec3(.03,.16,.48),smoothstep(.72,.98,s));
+  c=mix(c,vec3(.01,.05,.19),smoothstep(.95,1.3,s));return mix(c,vec3(.004,.008,.022),smoothstep(1.25,1.75,s));}
+void main(){
+  vec2 fc=gl_FragCoord.xy;float t=time,asp=res.x/res.y;
+  vec2 dm=fc-mouse;float dl=length(dm)/dpr;
+  vec2 P=fc;float lens=0.;
+  if(mode>2.5&&mode<3.5){lens=push*exp(-dl*dl/(2.*130.*130.));P=fc-dm*lens*.42;}
+  float cell=cellPx;
+  vec2 cid=floor(P/cell),cf=fract(P/cell)-.5,cc=(cid+.5)*cell,p=cc/res,q=vec2(p.x*asp,p.y);
+  vec2 w=vec2(fbm(q*1.5+vec2(t*.028,0.)),fbm(q*1.5-vec2(0.,t*.022)+5.))-.5;
+  float s=(p.x*.9+(1.-p.y)*1.1)*.9+w.x*.38+sin(q.x*2.1+q.y*2.7+t*.11)*.05+night*.42-.06;
+  vec2 mp=mouse/res;float md2=length((p-mp)*vec2(asp,1.));
+  if(mode>1.5&&mode<2.5){s+=.3;s-=.75*exp(-md2*md2*5.)*push;}
+  vec2 fq=(p-focus)*vec2(asp,1.);s-=focusAmt*.6*exp(-dot(fq,fq)*3.5);
+  vec3 col=ramp(s);
+  vec2 pq=(p-vec2(.02,.2))*vec2(2.2,3.);col=mix(col,vec3(.04,.32,.72),exp(-dot(pq,pq))*.55*smoothstep(.6,1.1,s));
+  float lum=dot(col,vec3(.3,.55,.15));
+  col=mix(col,tint*(.08+1.05*pow(lum,.9))+vec3(.9)*smoothstep(.7,1.,lum)*.25,tintAmt);
+  col*=1.+.35*exp(-dl*dl/(2.*150.*150.))*(1.-step(1.5,mode)*step(mode,2.5)*.6);
+  float age=t-rip.z,gd=length(cc-rip.xy)/dpr;col*=1.+rip.w*.9*exp(-pow((gd-age*620.)/70.,2.))*exp(-age*1.4)*step(0.,age);
+  vec4 M=texture2D(tex,vec2((cid.x+.5)/grid.x,1.-(cid.y+.5)/grid.y));
+  vec3 led=mix(vec3(.82,1.,.9),vec3(1.,.98,.92),night*.0);
+  col=mix(col,mix(col*.22,led*1.12,M.r),textAmt);
+  float r=length(cf),aa=1.3/cell,R=.41+.07*lens+.05*M.r*textAmt,disc=1.-smoothstep(R-aa,R+aa,r),core=smoothstep(.04,.15,r);
+  vec2 hq=cf-vec2(-.13,.13);float hl=exp(-dot(hq,hq)*45.);lum=dot(col,vec3(.3,.55,.15));
+  vec3 o=mix(col*.05,col*(.5+.5*core)+vec3(hl*.22*lum),disc);
+  o=mix(o,col*.9,M.g*.28);
+  float rv=reveal*1.35-h21(floor(fc/(9.*dpr)))*.35;
+  if(length((fc-res*.5)/res*vec2(1.4,1.))>rv)o=vec3(.004,.008,.022);
+  gl_FragColor=vec4(o,1.);
+}`;
+let ok = !!gl, U = {}, mask = document.createElement('canvas'), mx = mask.getContext('2d'), tex = null;
+if (ok){
+  const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
+  try {
+    const pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(pr); gl.useProgram(pr);
+    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,3,-1,-1,3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    for (const n of ['res','mouse','grid','focus','time','dpr','night','mode','textAmt','push','focusAmt','tintAmt','reveal','cellPx','tint','rip','tex']) U[n] = gl.getUniformLocation(pr, n);
+    tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(U.tex, 0);
+  } catch(e){ ok = false; console.error(e); }
+}
+if (!ok) document.body.style.background = 'linear-gradient(135deg,#eef3ee,#a3cfe9 40%,#1a4f8f 62%,#04103a 80%,#010205)';
+
+/* ---------- state ---------- */
+const S = {v:1, mouse:[-9999, -9999], tm:[-9999, -9999], hover:null, open:null, text:0, textT:0, push:0, pushT:0, focus:[.5, .5], fA:0, fT:0, tint:[1, 1, 1], tintT:[1, 1, 1], tA:0, tAT:0, rip:[0, 0, -99, 0], reveal:reduce ? 2 : 0, word:'', dpr:1, cell:7};
+const MOOD = {name:[1, .97, .9], work:[.35, .7, 1], books:[1, .7, .38], thoughts:[.5, 1, .74]};
+const TIPS = {1:'Hover a word to put it on the screen.', 2:'The light follows you. Click a word.', 3:'The dots lean away. Drag a word and let go.', 4:'Each word has its own light.'};
+const words = $$('.w');
+
+function size(){
+  S.dpr = Math.min(2, devicePixelRatio || 1); cv.width = Math.round(innerWidth * S.dpr); cv.height = Math.round(innerHeight * S.dpr);
+  S.cell = Math.round((innerWidth < 760 ? 6 : 7) * S.dpr); S.gw = Math.ceil(cv.width / S.cell); S.gh = Math.ceil(cv.height / S.cell);
+  mask.width = S.gw; mask.height = S.gh; document.body.classList.toggle('wide', innerWidth >= 760); drawMask();
+}
+/* the mask the shader reads: red = the word lit on the billboard, green = calm halos behind the words so they read */
+function drawMask(){
+  const g = mx, W = mask.width, H = mask.height, k = 1 / (S.cell / S.dpr);
+  g.globalCompositeOperation = 'source-over'; g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+  g.globalCompositeOperation = 'lighter';
+  if (S.word){ const fs = Math.min(H * .5, W * 1.55 / Math.max(3, S.word.length)); g.fillStyle = '#f00'; g.font = `800 ${fs}px -apple-system,BlinkMacSystemFont,"Inter","Helvetica Neue",Arial,sans-serif`;
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(S.word.toUpperCase(), W / 2, H / 2 + fs * .04); }
+  if (S.v !== 1 || !S.word){ g.filter = 'blur(6px)'; g.fillStyle = '#0f0';
+    for (const w of words){ const r = w.querySelector('.t').getBoundingClientRect(); if (!r.width) continue; const x = r.left * k, y = r.top * k, ww = r.width * k, hh = r.height * k;
+      g.beginPath(); g.ellipse(x + ww / 2, y + hh / 2, ww * .7 + 4, hh * .9 + 3, 0, 0, Math.PI * 2); g.fill(); }
+    g.filter = 'none'; }
+  if (tex){ gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mask); }
+}
+
+/* ---------- variants ---------- */
+function setV(v){
+  S.v = v; document.body.className = document.body.className.replace(/\bv\d\b/g, '').trim() + ' v' + v;
+  $$('#sw button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.v === v)));
+  $('#tip').textContent = TIPS[v]; S.word = ''; S.textT = 0; S.pushT = v === 2 || v === 3 ? 1 : 0; S.tAT = 0;
+  words.forEach(w => { w.style.transform = ''; w.classList.remove('on'); });
+  if (S.open) onOpenFx(S.open); drawMask(); try { history.replaceState(null, '', '#' + v); } catch(e){}
+}
+$$('#sw button').forEach(b => b.addEventListener('click', () => setV(+b.dataset.v)));
+
+function hoverFx(k){
+  S.hover = k;
+  if (S.v === 1){ S.word = k ? (k === 'name' ? 'Vipin' : k) : (S.open ? (S.open === 'name' ? 'Vipin' : S.open) : ''); S.textT = S.word ? 1 : 0; drawMask(); }
+  if (S.v === 4){ const m = k || S.open; if (m){ S.tintT = MOOD[m].slice(); S.tAT = 1; } else S.tAT = 0; }
+}
+function onOpenFx(k){
+  const w = words[ORDER.indexOf(k)], r = w.getBoundingClientRect();
+  S.focus = [(r.left + r.width / 2) / innerWidth, 1 - (r.top + r.height / 2) / innerHeight];
+  if (S.v === 2) S.fT = 1; else S.fT = .55;
+  if (S.v === 1){ S.word = k === 'name' ? 'Vipin' : k; S.textT = 1; drawMask(); }
+  if (S.v === 4){ S.tintT = MOOD[k].slice(); S.tAT = 1; }
+}
+function ripple(x, y, a){ S.rip = [x * S.dpr, (innerHeight - y) * S.dpr, performance.now() / 1000, a || 1]; }
+
+/* ---------- the note sheet ---------- */
+const note = $('#note'), nb = $('#nb');
+function openNote(k, x, y){
+  S.open = k; words.forEach(w => w.classList.toggle('on', w.dataset.k === k));
+  document.body.classList.add('open'); note.setAttribute('aria-hidden', 'false');
+  const N = NOTES[k];
+  nb.classList.remove('go'); nb.innerHTML = `<h2 id="nt">${S.v === 2 && !reduce ? '<span class="tw"></span><span class="caret"></span>' : N.title}</h2>` + N.html;
+  if (S.v === 2 && !reduce){ const tw = nb.querySelector('.tw'); let i = 0; const typ = () => { tw.textContent = N.title.slice(0, ++i); if (i < N.title.length) setTimeout(typ, 55 + Math.random() * 60); else setTimeout(() => { const c = nb.querySelector('.caret'); if (c) c.remove(); }, 900); }; setTimeout(typ, 250); }
+  nb.querySelectorAll('.ln').forEach((el, i) => el.style.transitionDelay = (S.v === 2 ? .45 : .12) + i * .05 + 's');
+  requestAnimationFrame(() => requestAnimationFrame(() => nb.classList.add('go')));
+  nb.scrollTop = 0; onOpenFx(k);
+  if (x !== undefined) ripple(x, y, S.v === 3 ? 1.4 : 1);
+  setTimeout(() => $('#back').focus({preventScroll:true}), 400);
+}
+function closeNote(){
+  const k = S.open; S.open = null; document.body.classList.remove('open'); note.setAttribute('aria-hidden', 'true');
+  words.forEach(w => w.classList.remove('on')); S.fT = 0; if (S.v === 1){ S.word = ''; S.textT = 0; drawMask(); } if (S.v === 4) S.tAT = 0;
+  if (k) words[ORDER.indexOf(k)].focus({preventScroll:true});
+}
+$('#back').addEventListener('click', closeNote);
+$('#next').addEventListener('click', () => { const k = ORDER[(ORDER.indexOf(S.open) + 1) % 4]; const r = words[ORDER.indexOf(k)].getBoundingClientRect(); openNote(k, r.left + r.width / 2, r.top + r.height / 2); });
+addEventListener('keydown', e => {
+  if (e.key === 'Escape' && S.open) closeNote();
+  if (/^[1-4]$/.test(e.key) && !e.metaKey && !e.ctrlKey) setV(+e.key);
+  if (e.key === 'n' && !e.metaKey && !e.ctrlKey) forceNight = forceNight === null ? (nightOf(istHour()) > .5 ? 0 : 1) : null;
+});
+
+/* ---------- words: hover, click, and (magnet) drag and toss ---------- */
+const phys = new Map(words.map(w => [w, {x:0, y:0, vx:0, vy:0, drag:null}]));
+words.forEach(w => {
+  w.addEventListener('pointerenter', () => hoverFx(w.dataset.k));
+  w.addEventListener('pointerleave', () => hoverFx(null));
+  w.addEventListener('focus', () => hoverFx(w.dataset.k)); w.addEventListener('blur', () => hoverFx(null));
+  w.addEventListener('pointerdown', e => {
+    const P = phys.get(w); P.drag = {sx:e.clientX, sy:e.clientY, ox:P.x, oy:P.y, moved:false, lx:e.clientX, ly:e.clientY, lt:performance.now()};
+    try { w.setPointerCapture(e.pointerId); } catch(err){}
+  });
+  w.addEventListener('pointermove', e => {
+    const P = phys.get(w); if (!P.drag) return; const dx = e.clientX - P.drag.sx, dy = e.clientY - P.drag.sy;
+    if (Math.hypot(dx, dy) > 6) P.drag.moved = true;
+    if (S.v === 3 && P.drag.moved){ const now = performance.now(), dt = Math.max(8, now - P.drag.lt);
+      P.vx = (e.clientX - P.drag.lx) / dt * 16; P.vy = (e.clientY - P.drag.ly) / dt * 16; P.drag.lx = e.clientX; P.drag.ly = e.clientY; P.drag.lt = now;
+      P.x = P.drag.ox + dx; P.y = P.drag.oy + dy; }
+  });
+  const up = e => { const P = phys.get(w); if (!P.drag) return; const moved = P.drag.moved; P.drag = null;
+    if (moved && S.v === 3){ ripple(e.clientX, e.clientY, .8); return; }
+    if (!moved) openNote(w.dataset.k, e.clientX, e.clientY); };
+  w.addEventListener('pointerup', up); w.addEventListener('pointercancel', () => { phys.get(w).drag = null; });
+  w.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); const r = w.getBoundingClientRect(); openNote(w.dataset.k, r.left + r.width / 2, r.top + r.height / 2); } });
+});
+addEventListener('pointermove', e => { S.tm = [e.clientX, e.clientY]; });
+addEventListener('pointerleave', () => { S.tm = [-9999, -9999]; });
+document.addEventListener('pointerleave', () => { S.tm = [-9999, -9999]; });
+addEventListener('pointerdown', e => { if (!e.target.closest('.w,#note,#sw')){ ripple(e.clientX, e.clientY, .7); if (S.open && !e.target.closest('#note')) closeNote(); } });
+
+/* ---------- read the screen under each word so its ink always contrasts ---------- */
+const px = new Uint8Array(4 * 9 * 9);
+function inkCheck(){
+  if (!ok) return;
+  const probe = (x, y) => { const X = Math.max(0, Math.min(cv.width - 9, Math.round(x * S.dpr) - 4)), Y = Math.max(0, Math.min(cv.height - 9, Math.round((innerHeight - y) * S.dpr) - 4));
+    gl.readPixels(X, Y, 9, 9, gl.RGBA, gl.UNSIGNED_BYTE, px); let L = 0; for (let i = 0; i < 81; i++) L += .3 * px[i * 4] + .55 * px[i * 4 + 1] + .15 * px[i * 4 + 2]; return L / 81 / 255; };
+  for (const w of words){ const r = w.querySelector('.t').getBoundingClientRect(); if (!r.width) continue;
+    const L = (probe(r.left - 10, r.top + r.height / 2) + probe(r.right + 10, r.top + r.height / 2) + probe(r.left + r.width / 2, r.top - 8) + probe(r.left + r.width / 2, r.bottom + 8)) / 4;
+    const dark = L > .34; w.style.setProperty('--c', dark ? '#0b0f1a' : '#f3f6fa'); w.style.setProperty('--g', dark ? 'rgba(240,246,250,.75)' : 'rgba(0,4,14,.7)'); }
+  const L2 = probe(60, innerHeight - 20), L3 = probe(innerWidth - 120, innerHeight - 20);
+  $('#meta').style.setProperty('--m', L2 > .34 ? '#0b0f1a' : '#eef2f7'); $('#tip').style.setProperty('--m', L3 > .34 ? '#0b0f1a' : '#eef2f7');
+}
+
+/* ---------- loop ---------- */
+let last = performance.now(), lastInk = 0, lastMask = 0;
+const ease = (a, b, k) => a + (b - a) * k;
+function frame(now){
+  const dt = Math.min(.05, (now - last) / 1000); last = now; const t = now / 1000, k = 1 - Math.exp(-dt * 6);
+  S.reveal = Math.min(2, S.reveal + dt * .9);
+  S.mouse = S.mouse[0] < -999 ? S.tm.slice() : [ease(S.mouse[0], S.tm[0], 1 - Math.exp(-dt * 14)), ease(S.mouse[1], S.tm[1], 1 - Math.exp(-dt * 14))];
+  if (S.tm[0] < -999) S.mouse = [-9999, -9999];
+  S.text = ease(S.text, S.textT, 1 - Math.exp(-dt * 7)); S.push = ease(S.push, S.pushT * (S.tm[0] < -999 ? 0 : 1), k); S.fA = ease(S.fA, S.fT, 1 - Math.exp(-dt * 3));
+  S.tA = ease(S.tA, S.tAT, 1 - Math.exp(-dt * 4)); for (let i = 0; i < 3; i++) S.tint[i] = ease(S.tint[i], S.tintT[i], 1 - Math.exp(-dt * 4));
+  /* magnet: words drift away from the cursor and spring home after a toss */
+  for (const [w, P] of phys){
+    if (S.v === 3 && !P.drag){
+      const r = w.getBoundingClientRect(), cx = r.left + r.width / 2 - P.x, cy = r.top + r.height / 2 - P.y, dx = cx + P.x - S.tm[0], dy = cy + P.y - S.tm[1], d = Math.hypot(dx, dy) || 1;
+      const f = S.tm[0] < -999 ? 0 : Math.max(0, 1 - d / 260) * 900;
+      P.vx += (-P.x * 60 + dx / d * f) * dt; P.vy += (-P.y * 60 + dy / d * f) * dt; P.vx *= Math.exp(-dt * 7); P.vy *= Math.exp(-dt * 7);
+      P.x += P.vx * dt * 1; P.y += P.vy * dt * 1;
+      const edgeX = innerWidth / 2 - 60, edgeY = innerHeight / 2 - 50; if (Math.abs(P.x) > edgeX){ P.x = Math.sign(P.x) * edgeX; P.vx *= -.6; } if (Math.abs(P.y) > edgeY){ P.y = Math.sign(P.y) * edgeY; P.vy *= -.6; }
+      w.style.transform = `translate(${P.x.toFixed(1)}px,${P.y.toFixed(1)}px) rotate(${(P.vx * .02).toFixed(2)}deg)`;
+    } else if (S.v === 3 && P.drag) w.style.transform = `translate(${P.x.toFixed(1)}px,${P.y.toFixed(1)}px) rotate(${(P.vx * .03).toFixed(2)}deg) scale(1.06)`;
+    else if (P.x || P.y){ P.x = P.y = P.vx = P.vy = 0; w.style.transform = ''; }
+  }
+  if (S.v === 3 && now - lastMask > 120){ lastMask = now; drawMask(); }
+  if (ok){
+    gl.viewport(0, 0, cv.width, cv.height);
+    gl.uniform2f(U.res, cv.width, cv.height); gl.uniform2f(U.mouse, S.mouse[0] * S.dpr, (innerHeight - S.mouse[1]) * S.dpr);
+    gl.uniform2f(U.grid, S.gw, S.gh); gl.uniform2f(U.focus, S.focus[0], S.focus[1]);
+    gl.uniform1f(U.time, reduce ? 0 : t); gl.uniform1f(U.dpr, S.dpr); gl.uniform1f(U.cellPx, S.cell);
+    gl.uniform1f(U.night, forceNight === null ? nightOf(istHour()) : forceNight); gl.uniform1f(U.mode, S.v);
+    gl.uniform1f(U.textAmt, S.text); gl.uniform1f(U.push, S.push); gl.uniform1f(U.focusAmt, S.fA); gl.uniform1f(U.tintAmt, S.tA * .85);
+    gl.uniform1f(U.reveal, S.reveal); gl.uniform3f(U.tint, S.tint[0], S.tint[1], S.tint[2]); gl.uniform4f(U.rip, S.rip[0], S.rip[1], S.rip[2], S.rip[3]);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    if (now - lastInk > 220){ lastInk = now; inkCheck(); }
+  }
+  requestAnimationFrame(frame);
+}
+
+addEventListener('resize', size);
+size(); setV(+(location.hash.slice(1)) || 1);
+setTimeout(() => document.body.classList.add('in'), reduce ? 0 : 450);
+requestAnimationFrame(frame);
+window.__S = S;
+}
+</script>
+</body>
+</html>
