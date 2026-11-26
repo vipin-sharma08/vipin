@@ -18,3 +18,4 @@
 - 2026-11-26: Footer back to pixel art: old pixel forest plus deodars and rhododendrons, pixel Himalaya behind (couloirs, plume, clouds, birds, stars); three.js removed
 - 2026-11-26: Footer: natural peaks (uneven slopes, shoulders, toothed crests, aretes, rock patches, paler back range) and two Himachali homes (kath-kuni house with chimney smoke, stone hut with woodpile), windows glow at night
 - 2026-11-26: Footer on phones is a 1280px panorama you swipe sideways, opening on the middle; homes moved toward the centre
+- 2026-11-26: Footer motion pass: one wind field with travelling gusts, two-spring trees (trunk leads, crown lags), grass sheen, rhododendron petals that tear loose and settle, cursor and touch gusts, tap to spring a tree, alpenglow at dawn and dusk (IST), dithered valley mist, V of birds, shooting star, hue-shifted greens, 30 fps; per-pixel allocations and sin hashes removed (57 fps desktop, 45 fps phone at 4x throttle)
