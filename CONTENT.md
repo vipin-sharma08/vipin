@@ -134,6 +134,6 @@ Keep a `NUMBER_DEMO = true` flag and a visible "Preview" line until a backend ex
 
 ## Sky page (26 Nov 2026, from reference/04)
 The live site uses this copy; `content.ts` holds it word for word. Sections above that the Sky page doesn't show (the 2x2 words, sheet chrome) are kept for history.
-- Home: "Founder’s Office at Incentiv. Open to fintech growth and ops roles." / "You can reach me on GitHub, LinkedIn, X and Substack."
+- Home: "Bio" / "You can reach me on GitHub, LinkedIn, X and Substack." (26 Nov: the intro line was replaced with "Bio" at Vipin's ask)
 - Notes rows: Work, Books, Thoughts, Music. Projects rows: the six Incentiv builds plus MemoAI, each with a short line. Experience rows: Incentiv, FLAME University, WhiteSight, Deccan Nutraceuticals.
 - Music (SAMPLE LIST, TODO replace): Kun Faya Kun, Intro, Iktara, Nuvole Bianche, Midnight City

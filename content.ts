@@ -24,7 +24,7 @@ export const SOON_TIP = 'Link coming soon';
 export const home = {
   first: 'Vipin',
   role: 'Founder’s Office, Incentiv',
-  intro: ['Founder’s Office at ', { text: 'Incentiv', url: 'https://incentiv.finance' }, '. Open to fintech growth and ops roles.'] as Part[],
+  intro: ['Bio'] as Part[],
   reach: [
     'You can reach me on ',
     { text: 'GitHub', url: 'https://github.com/vipin-sharma08' },
