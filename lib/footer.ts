@@ -37,7 +37,7 @@ export function startFooter(tr: HTMLCanvasElement, reduce: boolean, onDirty: () 
   let TW = 0, TH = 0, TS = 4, G = 0, A = 0, TB = 50;
   let trees: Tree[] = [], far: Tree[] = [], tufts: { x: number; h: number; f: number }[] = [], rocks: { x: number; w: number }[] = [];
   let peaks: Peak[] = [], hero: Peak | null = null, clouds: Cloud[] = [], ridge = new Int16Array(0), homes: Home[] = [];
-  let back = new Float32Array(0), backS = new Float32Array(0);
+  let back = new Float32Array(0), backS = new Float32Array(0), centred = false;
   let img: ImageData | null = null, farBuf: Uint8ClampedArray | null = null, farKey = '', visible = true, t0 = 0;
 
   function size() {
@@ -55,7 +55,7 @@ export function startFooter(tr: HTMLCanvasElement, reduce: boolean, onDirty: () 
       }
       return out; };
     // two Himachali homes in a clearing; front-row trees step aside for them
-    homes = [{ x: Math.round(TW * 0.31), kind: 'house', half: 14 }, { x: Math.round(TW * 0.74), kind: 'hut', half: 12 }];
+    homes = [{ x: Math.round(TW * 0.42), kind: 'house', half: 14 }, { x: Math.round(TW * 0.76), kind: 'hut', half: 12 }];
     far = mk(0, [3, 4], 500); trees = mk(1, [5, 6], 100).concat(mk(2, [6, 8], 900).filter((t) => homes.every((h) => Math.abs(t.x - h.x) > h.half + t.h * 0.3)));
     tufts = Array.from({ length: Math.ceil(TW / 2) }, (_, i) => ({ x: i * 2 + ((th(i + 40) * 2) | 0), h: 1 + ((th(i + 41) * 3) | 0), f: th(i + 42) }));
     rocks = Array.from({ length: Math.ceil(TW / 60) }, (_, i) => ({ x: (th(i + 80) * TW) | 0, w: 3 + ((th(i + 81) * 4) | 0) }));
@@ -83,6 +83,9 @@ export function startFooter(tr: HTMLCanvasElement, reduce: boolean, onDirty: () 
     for (let x = 0; x < TW; x++) ridge[x] = Math.round(G - A * (0.4 + 0.14 * (vn(x / 22, 7) * 0.7 + vn(x / 7, 9) * 0.3)));
     // clouds: soft pixel blobs with flat bellies
     clouds = Array.from({ length: Math.max(4, Math.round(TW / 45)) }, (_, i) => mkCloud(th(i + 400) * TW, i));
+    // on phones the panorama is wider than the screen and scrolls sideways: open on the middle
+    const box = tr.parentElement;
+    if (box && !centred && box.scrollWidth > box.clientWidth + 4) { box.scrollLeft = (box.scrollWidth - box.clientWidth) / 2; centred = true; }
     farKey = ''; t0 = 0; onDirty();
   }
   function mkCloud(x: number, i: number): Cloud {

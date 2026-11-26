@@ -17,3 +17,4 @@
 - 2026-11-26: Footer reworked around the trees: meadow of deodars, blue pines and rhododendrons, toon-shaded; cursor breeze, click to boing, tap grass for a gust
 - 2026-11-26: Footer back to pixel art: old pixel forest plus deodars and rhododendrons, pixel Himalaya behind (couloirs, plume, clouds, birds, stars); three.js removed
 - 2026-11-26: Footer: natural peaks (uneven slopes, shoulders, toothed crests, aretes, rock patches, paler back range) and two Himachali homes (kath-kuni house with chimney smoke, stone hut with woodpile), windows glow at night
+- 2026-11-26: Footer on phones is a 1280px panorama you swipe sideways, opening on the middle; homes moved toward the centre
